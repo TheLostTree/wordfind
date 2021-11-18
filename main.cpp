@@ -2,116 +2,152 @@
 #include <fstream>
 #include <list>
 #include <map>
+#include <string>
 #include <string.h>
 #include <vector>
+#include <algorithm>
+
 //#include "json.hh"
 
 using namespace std;
-class mappain{
-    //haha look the map declaration is in a class im so good at coding wow
-    map<string, vector<string> > connect;
-    public:
-        int addtomap(string, string);
-        void findinmap(string);
-};
-int mappain::addtomap(string sorted,string original){
-    //ofstream writerbs("indexingshit.txt");
-    //writerbs.open("indexingshit.txt", ios::trunc);
-    vector <string> possible;
-    map<string, vector<string> >::iterator locat = connect.find(sorted);
-    //if the value isnt then just add it
-    if(locat == connect.end()){
-        possible.insert(possible.begin(), original);
-        connect.insert(make_pair(sorted, possible));
-    }
-    //if the sorted version of the word is already in the dictionary append the original word to the list
-    else{
-        possible = locat->second;
-        possible.insert(possible.begin(), original);
-        connect[sorted] = possible;
-    }
-    return 1;
-}
-void mappain::findinmap(string in){
-    
-    map<string, vector<string> >::iterator location = connect.find(in);
-    vector<string> storage = location->second;
-    cout << "i ran\n";
-    for(int temptemp=0; temptemp < storage.size(); temptemp++){
-        cout << storage.at(temptemp) << '\n';
-    }
-}
-//process a giant word list and categorize by letters, eventually
-int parse(int ct, string fileinp,mappain sufferingagain) {
-    //decleare filereader named reader
-    ifstream reader;
-    //open up the words list
-    reader.open(fileinp);
-    //cout << "Opened file "<< "\n";
-    //oh god wordlist.txt has 370,103 words in it if i didnt count wrong
-    //move the reader to the next word, iterated in main
-    reader.seekg(ct);
-    //cout << "moved to " << ct << "\n";
-    // im sure creating a variable like 100 times to itrate 100 times is terrible but eh
-    string line = "";
-    //make sure this is open, else return -1
-    if (reader.is_open()) {
-        //pull a line from ifstream (var line here has nothing to do with it)
-        reader >> line;
-        string copy = line;
-        //output it (replace cout with an actual function)
-        //cout << line << "\n";
-        //bruh i spent so much time and apparently theres a function that does all the work for me im fine
 
-        //oh yay this next block of code woulda been in a different function but oh well        
-        //sort it
+class readersuffering{
+    ifstream fileIn;
+    string filename;
+    string line;
+    //this'll be great fun 
+    //i love vectors now
+    //also 2d vector because i like confusing myself
+    //im sure this'll wont blow up in my face
+    vector< vector <string> > dictionary;
+    vector <string> key;
+    //will be formated simplified version, actual word
+    
+    public:
+        bool openFile(string);
+        void readAndProcess();
+        vector <string> findword(string);
+        string letters;
+    
+};
+
+void readersuffering::readAndProcess(){
+    int interationsOfFun = 0;
+    while(!fileIn.eof()){
+        getline(fileIn, line);
+        string copy = line;
+        //load the word into dictionary
         sort(line.begin(), line.end());
-        //removeduplicate letters
-        char ch[line.length()];
-        //convert str to char array :vomit
+        vector<char> v(line.begin(), line.end());
+        //add a space because buffer value i could probably use a random unicode char instead but this is easier 
+        v.insert(v.end(),' ');
+
         string finalstr = "";
-        strcpy(ch, line.c_str());
-        for(int index = 0; index < sizeof(ch);){
-            char letter = ch[index];
+        for(int index = 0; index < v.size();){
+            char letter = v.at(index);
             int increment = 1;
-            while(ch[index] == ch[index+increment]){
-                increment++;
+            // these if statements are probably redundant but i really need this to NOT break so redundant it is
+            // im sure the compiler is smarter than me and will fix this
+            //if letter == letter to the right, then check the letter to the right of that one
+            if ((index+increment) < v.size()){
+                while(v.at(index) == v.at(index+increment)){
+                    if ((index+increment) < v.size())
+                    {
+                        ++increment;
+                    }
+                    //oh wow i fixed it by adding a space to the end im so good at my job   
+                }
             }
-            finalstr = finalstr + letter;
+            //add the letter to the final output
+            if(letter != ' '){
+                //skip the space
+                finalstr = finalstr + letter;
+            }
+            //skip over the repeating letters
             index = index + increment;
         }
-        line = finalstr;
-        cout << line << "\n";
-        sufferingagain.addtomap(line, copy);
+        //cout << finalstr << endl;
 
+        //find if sorted version already exists, if not then add it
+        vector<string>::iterator it;
+        it = find(key.begin(), key.end(), finalstr);
+        if(it != key.end()){
+            //it is there
+            dictionary[distance(key.begin(), it)].push_back(copy);
+            cout << "dictionary added word " << copy << endl;
 
-        //end of file, close reader and return 0
-        if (reader.eof()) {
-            reader.close();
-            cout << "End of file" << "\n";
-            return -10;
+            //add word corresponding to the simplified version
         }
-        //write reader loc to a var so i can both return and close the reader
-        int iguess = reader.tellg();
-        //cout << "location: " << iguess << "\n";
-        reader.close();
-        //yay i fixed the jank
-        if(iguess!= -10){
-            parse(iguess, fileinp, sufferingagain);
+        else{
+            //it is not there
+            key.push_back(finalstr);
+            vector <string> in;
+            dictionary.push_back(in);
+            dictionary[dictionary.size()-1].push_back(copy);
+            cout << "dictionary added new word " << copy << endl;
+            //add the sorted version on a different vector cause im lazy and inefficient
+            //add the word corresponding on row 2
+        
         }
+        //add the og word in the same row/ column depends on what i implememnt
+
     }
-    else {
-        cout << "uhoh it didnt open ;-;" << "\n";
-        return -9;
-    }
-    return -9;
+
 }
+vector<string> readersuffering::findword(string inpls){
+    sort(inpls.begin(), inpls.end());
+    vector<string>::iterator it;
+    it = find(key.begin(), key.end(), inpls);
+    if(it != key.end()){
+        //it is there
+        return dictionary[distance(key.begin(), it)];
+    }
+    else{
+        vector <string> sigh;
+        sigh.push_back("none cause ya messed up >:(");
+        return sigh;
+    }
+}
+
+bool readersuffering::openFile(string in){
+    //why does this function exist it doesnt need to but ok
+    fileIn.open(in);
+    if (fileIn.is_open()){
+        return true;
+    }
+    else{
+        return false;
+    }
+    return false;
+}
+
+
 int main() {
     //jank
-    string file= "words_test.txt";
-    mappain suffering;
-    parse(0,file,suffering);
-    suffering.findinmap("lameness");
-
+    string file= "longlist.txt";
+    //first letter is required 
+    char inputletters[] = "i a d h l n y";
+    //char inputletters[] = "aelmns";
+    readersuffering readerpain;
+    if (readerpain.openFile(file)){
+        readerpain.readAndProcess();
+        
+        readerpain.letters = "";
+        for(int iter = 0; iter < sizeof(inputletters); iter++){
+            if(inputletters[iter] != ' '){
+                readerpain.letters = readerpain.letters+ inputletters[iter];
+            }
+        }
+        vector <string> out = readerpain.findword(inputletters);
+        cout << "words are: ";
+        for(int i=0; i < out.size(); i++){
+            std::cout << out.at(i) << ' ';
+        }
+    }
+    else{
+        cout << "file aint existent";
+        return -1;
+    }
+    
     return 0;
 }

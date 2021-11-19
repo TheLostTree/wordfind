@@ -27,7 +27,6 @@ class readersuffering{
         bool openFile(string);
         void readAndProcess();
         vector <string> findword(string);
-        string letters;
     
 };
 
@@ -74,7 +73,7 @@ void readersuffering::readAndProcess(){
         if(it != key.end()){
             //it is there
             dictionary[distance(key.begin(), it)].push_back(copy);
-            cout << "dictionary added word " << copy << endl;
+            //cout << "dictionary added word " << copy << endl;
 
             //add word corresponding to the simplified version
         }
@@ -84,7 +83,7 @@ void readersuffering::readAndProcess(){
             vector <string> in;
             dictionary.push_back(in);
             dictionary[dictionary.size()-1].push_back(copy);
-            cout << "dictionary added new word " << copy << endl;
+            //cout << "dictionary added new word " << copy << endl;
             //add the sorted version on a different vector cause im lazy and inefficient
             //add the word corresponding on row 2
         
@@ -104,7 +103,7 @@ vector<string> readersuffering::findword(string inpls){
     }
     else{
         vector <string> sigh;
-        sigh.push_back("none cause ya messed up >:(");
+        sigh.push_back("none cause ya messed up >:( \n");
         return sigh;
     }
 }
@@ -124,24 +123,23 @@ bool readersuffering::openFile(string in){
 
 int main() {
     //jank
-    string file= "longlist.txt";
+    string file= "words_alpha.txt";
     //first letter is required 
     char inputletters[] = "i a d h l n y";
     //char inputletters[] = "aelmns";
     readersuffering readerpain;
     if (readerpain.openFile(file)){
         readerpain.readAndProcess();
-        
-        readerpain.letters = "";
-        for(int iter = 0; iter < sizeof(inputletters); iter++){
-            if(inputletters[iter] != ' '){
-                readerpain.letters = readerpain.letters+ inputletters[iter];
+        cout << "done loading \n";
+        string input;
+        while (input != "EXITPLS"){
+            cout << "letters: \n";
+            cin >> input;
+            vector <string> out = readerpain.findword(input);
+            cout << "words are: ";
+            for(int i=0; i < out.size(); i++){
+                std::cout << out.at(i) << ' ';
             }
-        }
-        vector <string> out = readerpain.findword(inputletters);
-        cout << "words are: ";
-        for(int i=0; i < out.size(); i++){
-            std::cout << out.at(i) << ' ';
         }
     }
     else{

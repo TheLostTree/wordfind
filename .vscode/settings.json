@@ -1,0 +1,30 @@
+{
+    "files.associations": {
+        "exception": "cpp",
+        "filesystem": "cpp",
+        "fstream": "cpp",
+        "functional": "cpp",
+        "iomanip": "cpp",
+        "iosfwd": "cpp",
+        "istream": "cpp",
+        "iterator": "cpp",
+        "locale": "cpp",
+        "memory": "cpp",
+        "stdexcept": "cpp",
+        "string": "cpp",
+        "system_error": "cpp",
+        "typeinfo": "cpp",
+        "xhash": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocbuf": "cpp",
+        "xlocinfo": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp",
+        "vector": "cpp"
+    }
+}

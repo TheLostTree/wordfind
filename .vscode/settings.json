@@ -25,6 +25,9 @@
         "xloctime": "cpp",
         "xstring": "cpp",
         "xutility": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "ostream": "cpp",
+        "algorithm": "cpp",
+        "iostream": "cpp"
     }
 }

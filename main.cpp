@@ -6,6 +6,7 @@
 #include <string.h>
 #include <vector>
 #include <algorithm>
+#include <math.h>
 
 //#include "json.hh"
 
@@ -23,15 +24,18 @@ class readersuffering{
     vector <string> key;
     //will be formated simplified version, actual word
     
+    vector <char> letters;
+    vector <char> used;
     public:
         bool openFile(string);
         void readAndProcess();
         vector <string> findword(string);
-    
+        void findAll(string);
+        vector <string> combination;
 };
 
 void readersuffering::readAndProcess(){
-    int interationsOfFun = 0;
+    cout << "loading... \n";
     while(!fileIn.eof()){
         getline(fileIn, line);
         string copy = line;
@@ -103,7 +107,7 @@ vector<string> readersuffering::findword(string inpls){
     }
     else{
         vector <string> sigh;
-        sigh.push_back("none cause ya messed up >:( \n");
+        //sigh.push_back("none cause ya messed up >:( \n");
         return sigh;
     }
 }
@@ -112,34 +116,82 @@ bool readersuffering::openFile(string in){
     //why does this function exist it doesnt need to but ok
     fileIn.open(in);
     if (fileIn.is_open()){
+        cout << "File Open \n";
         return true;
     }
     else{
         return false;
     }
-    return false;
 }
 
 
+void readersuffering::findAll(string str)
+{   
+    //stolen code from geeksforgeeks because i cant be bothered
+
+
+    /* Number of subsequences is (2**n -1)*/
+    int n = str.length();
+    unsigned int opsize = pow(2, n);
+  
+    /* Generate all subsequences of a given string.
+       using counter 000..1 to 111..1*/
+    for (int counter = 1; counter < opsize; counter++)
+    {
+        string subs = "";
+        for (int j = 0; j < n; j++)
+        {
+            /* Check if jth bit in the counter is set
+                If set then print jth element from arr[] */
+            if (counter & (1<<j))
+                subs.push_back(str[j]);
+        }
+  
+        /* Print current subsequence */
+
+        combination.push_back(subs);        
+    }
+}
+  
 int main() {
     //jank
-    string file= "words_alpha.txt";
+    string file= "moresanelist.txt";
     //first letter is required 
-    char inputletters[] = "i a d h l n y";
-    //char inputletters[] = "aelmns";
     readersuffering readerpain;
     if (readerpain.openFile(file)){
         readerpain.readAndProcess();
         cout << "done loading \n";
         string input;
+        //
         while (input != "EXITPLS"){
             cout << "letters: \n";
             cin >> input;
-            vector <string> out = readerpain.findword(input);
-            cout << "words are: ";
-            for(int i=0; i < out.size(); i++){
-                std::cout << out.at(i) << ' ';
+            if (input == "EXITPLS"){
+                break;
             }
+            readerpain.findAll(input);
+            //make an output vector and a temp vector
+            vector <string> out;
+            vector <string> temp;
+            //for all the items in vector combination(what the function returns), find word from dictionary and add it to "out"
+            cout << readerpain.combination.size() << endl;
+            for(int qoq = 0; qoq < readerpain.combination.size(); qoq++){
+                string str = readerpain.combination[qoq];
+                temp = readerpain.findword(str);
+                //cout << readerpain.combination[qoq] << endl;
+                for(int qiqi = 0; qiqi < temp.size(); qiqi ++){
+                    out.push_back(temp[qiqi]);
+                }
+            }
+            cout << "words are: ";
+            //print the words out :D
+            for(int i=0; i < out.size(); i++){
+                if(out[i].size() >3){
+                    cout << out.at(i) << ' ';
+                }
+            }
+            cout << "\n";
+            readerpain.combination.clear();
         }
     }
     else{
